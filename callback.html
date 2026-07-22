@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Compte connecté — Clipping Agency</title>
+<style>
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+         color:#141414; line-height:1.6; background:#fafafa; }
+  .carte { max-width:640px; margin:64px auto; background:#fff; border:1px solid #e6e6e6;
+           border-radius:14px; padding:36px; }
+  h1 { font-size:1.5rem; margin:0 0 8px; }
+  p { color:#444; }
+  .adresse { background:#f4f4f5; border:1px solid #e6e6e6; border-radius:8px; padding:14px;
+             font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:.82rem;
+             word-break:break-all; margin:18px 0; }
+  button { background:#141414; color:#fff; border:0; border-radius:8px; padding:12px 20px;
+           font-size:.95rem; cursor:pointer; }
+  button:hover { background:#333; }
+  .etat { margin-top:12px; font-size:.9rem; color:#0a7d33; min-height:20px; }
+  .erreur { color:#b00020; }
+  .aide { font-size:.88rem; color:#5b5b5b; margin-top:24px; border-top:1px solid #e6e6e6; padding-top:18px; }
+</style>
+</head>
+<body>
+<div class="carte">
+  <h1 id="titre">Compte connecté</h1>
+  <p id="message">Copiez l'adresse ci-dessous et collez-la dans l'outil pour terminer la connexion.</p>
+  <div class="adresse" id="adresse"></div>
+  <button onclick="copier()">Copier l'adresse</button>
+  <div class="etat" id="etat"></div>
+  <p class="aide">Cette page ne conserve aucune donnée : elle affiche simplement l'adresse de retour
+     fournie par la plateforme. Vous pouvez la fermer une fois l'adresse copiée.</p>
+</div>
+<script>
+  const adresse = window.location.href;
+  document.getElementById('adresse').textContent = adresse;
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('error')) {
+    document.getElementById('titre').textContent = "Connexion refusée";
+    document.getElementById('message').innerHTML =
+      "La plateforme a renvoyé une erreur : <strong>" + params.get('error') + "</strong>. " +
+      "Relancez la connexion depuis l'outil.";
+  } else if (!params.get('code')) {
+    document.getElementById('titre').textContent = "Page de retour";
+    document.getElementById('message').textContent =
+      "Cette page reçoit la confirmation après connexion d'un compte. Il n'y a rien à faire ici.";
+  }
+  function copier() {
+    navigator.clipboard.writeText(adresse).then(
+      () => document.getElementById('etat').textContent = "Adresse copiée.",
+      () => document.getElementById('etat').innerHTML =
+              "<span class='erreur'>Copie impossible : sélectionnez le texte à la main.</span>"
+    );
+  }
+</script>
+</body>
+</html>
